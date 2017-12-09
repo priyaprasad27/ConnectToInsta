@@ -21,7 +21,7 @@ import org.apache.http.impl.client.HttpClients;
 
 public class ConnectToInstaLauncher {
 	
-	private static String URI_AUTHENTICATE ="/oauth/authorize/?client_id=c04a229bfe1348ab87f3ff509acdc2a3&redirect_uri=https://linarespamela.wixsite.com/designandevolution&response_type=token";
+	private static String URI_AUTHENTICATE ="/oauth/authorize/?client_id=618bcb92b0cb46ad8fdd25529b4f266&redirect_uri=https://priyagraj.wixsite.com/website&response_type=token";
 	private static String ACCESS_TOKEN;
 
 	public static void main(String[] args) throws IOException {
@@ -36,7 +36,7 @@ public class ConnectToInstaLauncher {
     public static String authenticateUser(String userName, String password) throws IOException {
         String jsonResponse = null;
 
-        HttpHost target = new HttpHost("instagram.com", 443, "https");
+        HttpHost target = new HttpHost("api.instagram.com", 443, "https");
         CredentialsProvider credsProvider = buildCredentials(userName, password, target);
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setDefaultCredentialsProvider(credsProvider).build();
