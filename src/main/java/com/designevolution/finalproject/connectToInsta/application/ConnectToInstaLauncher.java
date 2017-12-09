@@ -21,9 +21,15 @@ import org.apache.http.impl.client.HttpClients;
 
 public class ConnectToInstaLauncher {
 	
-	private static String URI_AUTHENTICATE ="/oauth/authorize/?client_id=c04a229bfe1348ab87f3ff509acdc2a3&redirect_uri=https://linarespamela.wixsite.com/designandevolution&response_type=token";
+	private static String REDIRECT_URI="https://linarespamela.wixsite.com/designandevolution";
+	private static String CLIENT_ID = "c04a229bfe1348ab87f3ff509acdc2a3";
+	private static String TOKEN = "token";
+	private static String CODE = "code";
+	private static String SCOPE = "likes+public_content ";
+	private static String URI_AUTHENTICATE ="/oauth/authorize/?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=" + CODE + "&scope="+ SCOPE;
+	private static String URI_ACCESSTOKEN ="/oauth/authorize/?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=" + TOKEN ;
 	private static String ACCESS_TOKEN;
-
+	
 	public static void main(String[] args) throws IOException {
 		System.out.println("Welcome to Connect to Insta!");
 		String userName = getUserData("Please enter your username: ");
@@ -43,7 +49,7 @@ public class ConnectToInstaLauncher {
 
         try {
             HttpClientContext localContext = createClientContext(target);
-            HttpGet httpget = new HttpGet(URI_AUTHENTICATE);
+            HttpGet httpget = new HttpGet(URI_ACCESSTOKEN);
             executeGetHttpRequest(target, httpclient, localContext, httpget);
         }
         catch (Exception e) {
@@ -62,7 +68,7 @@ public class ConnectToInstaLauncher {
         AuthCache authCache = new BasicAuthCache();
 
         // Generate BASIC scheme object and add it to the local
-        // auth cache
+        // auth cache        
         BasicScheme basicAuth = new BasicScheme();
         authCache.put(target, basicAuth);
 
@@ -79,7 +85,7 @@ public class ConnectToInstaLauncher {
         for (int i = 0; i < 3; i++) {
             CloseableHttpResponse response = httpclient.execute(target, httpget,
                     localContext);
-            if (response.getStatusLine().getStatusCode() == 302) {
+            if (response.getStatusLine().getStatusCode() == 200) {
             	Header locationHeader = response.getFirstHeader("Location");
             	String location = locationHeader.getValue();
             	String[] splitLocation = location.split("=");
