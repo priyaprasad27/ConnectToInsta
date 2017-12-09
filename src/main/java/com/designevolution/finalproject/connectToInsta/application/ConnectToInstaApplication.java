@@ -8,7 +8,7 @@ import com.designevolution.finalproject.connectToInsta.domain.ConnectToInstaInst
 import com.designevolution.finalproject.connectToInsta.domain.UserInteractions;
 import com.designevolution.finalproject.connectToInsta.domain.api.InstagramResponse;
 
-public class ConnectToInstaLauncher {
+public class ConnectToInstaApplication {
 	
 	public static void main(String[] args) {
 		UserInteractions userInteractions = new UserInteractions();
@@ -28,6 +28,8 @@ public class ConnectToInstaLauncher {
 			userInteractions.prompt("There was an error processing your request. Please try again later.");
 			e.printStackTrace();
 		}
+		
+		userInteractions.prompt("Thank you! Your images have been saved to your desktop.");
 
 	}
 
