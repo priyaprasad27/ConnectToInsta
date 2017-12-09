@@ -1,15 +1,12 @@
 package com.designevolution.finalproject.connectToInsta.application;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Scanner;
-import com.google.gson.*;
+
 import com.google.gson.stream.JsonReader;
 
 public class ConnectToInstaBrowser {
@@ -20,7 +17,7 @@ public class ConnectToInstaBrowser {
 		String inputFile = "AccessToken.txt";
 		//String outputFile  = "output.txt";
 		String outputFile  = "result.JSON";
-		String path = "C:\\Users\\Swetha\\Desktop";
+		String path = "C:\\Users\\Pamela\\Desktop";
 		String line="";
 		
 		FileReader reader = new FileReader(path+"\\"+inputFile);
