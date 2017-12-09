@@ -2,10 +2,12 @@ package com.designevolution.finalproject.connectToInsta.domain;
 
 public class ConnectToInstaConstants {
 	
+	public static String ACCESS_TOKEN = "";
 	public static final String DESKTOP = System.getProperty("user.home") + "\\Desktop\\";
 	public static final String ACCESS_TOKEN_FILE = "AccessToken.txt";
 	public static final String DESKTOP_ACCESS_TOKEN_FILE = DESKTOP + ACCESS_TOKEN_FILE;
-	public static String ACCESS_TOKEN = "";
+	
+	public static final String JSON_RESPONSE_LOCATION = "src/main/resources/jsonResponse/";
 	public static final String JSON_RESPONSE = "JSONResult.json";
 
 	//CLIENT DATA
