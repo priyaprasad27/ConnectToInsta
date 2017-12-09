@@ -9,6 +9,8 @@ public class ConnectToInstaConstants {
 	
 	public static final String JSON_RESPONSE_LOCATION = "src/main/resources/jsonResponse/";
 	public static final String JSON_RESPONSE = "JSONResult.json";
+	
+	public static final String IMAGE_JPG = "BackgroundImage.jpg";
 
 	//CLIENT DATA
 	public static final String REDIRECT_URI="https://priyagraj.wixsite.com/website";
