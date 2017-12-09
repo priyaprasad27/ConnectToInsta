@@ -1,111 +1,100 @@
 package com.designevolution.finalproject.connectToInsta.application;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
 
-import org.apache.http.Header;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import com.designevolution.finalproject.connectToInsta.domain.ConnectToInstaConstants;
+import com.designevolution.finalproject.connectToInsta.domain.InstagramJSONParser;
+import com.designevolution.finalproject.connectToInsta.domain.api.Data;
+import com.designevolution.finalproject.connectToInsta.domain.api.InstagramResponse;
 
 public class ConnectToInstaLauncher {
 	
-	private static String REDIRECT_URI="https://linarespamela.wixsite.com/designandevolution";
-	private static String CLIENT_ID = "c04a229bfe1348ab87f3ff509acdc2a3";
-	private static String TOKEN = "token";
-	private static String CODE = "code";
-	private static String SCOPE = "likes+public_content ";
-	private static String URI_AUTHENTICATE ="/oauth/authorize/?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=" + CODE + "&scope="+ SCOPE;
-	private static String URI_ACCESSTOKEN ="/oauth/authorize/?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=" + TOKEN ;
-	private static String ACCESS_TOKEN;
-	
 	public static void main(String[] args) throws IOException {
-		System.out.println("Welcome to Connect to Insta!");
-		String userName = getUserData("Please enter your username: ");
-        String password = getUserData("Please enter your password: ");
-
-        authenticateUser(userName, password);
+		prompt("Welcome to Connect to Insta!");
+		prompt("Before beginning, please make sure you have your Access token stored on your desktop, and named " 
+				+ ConnectToInstaConstants.ACCESS_TOKEN_FILE + ". When you have this, hit any key to continue.");
+		
+		readAccessToken();
+		prompt("Great, now let's get started!");
+		
+		String tag1 = getUserData("What tag would you like to store pictures from: ");
+		processPicture(tag1);
 
 	}
 
-    public static String authenticateUser(String userName, String password) throws IOException {
-        String jsonResponse = null;
+	private static void processPicture(String tag) throws IOException {
+		String jsonResponse = getJsonResponse(tag);		
+		storeJsonResponse(jsonResponse);
+		InstagramResponse instagramResponse = parseJson(jsonResponse);
+		String imageToStore = getURLForMostLikedImage(instagramResponse.getData());
+		storeImage(imageToStore);
+	}
 
-        HttpHost target = new HttpHost("instagram.com", 443, "https");
-        CredentialsProvider credsProvider = buildCredentials(userName, password, target);
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setDefaultCredentialsProvider(credsProvider).build();
+	private static void storeImage(String imageToStore) {
+		// TODO Auto-generated method stub
+		
+	}
 
-        try {
-            HttpClientContext localContext = createClientContext(target);
-            HttpGet httpget = new HttpGet(URI_ACCESSTOKEN);
-            executeGetHttpRequest(target, httpclient, localContext, httpget);
-        }
-        catch (Exception e) {
-            System.out.println("Exception" + e.getMessage());
-        }
-        finally {
-            httpclient.close();
-        }
-        
-        return jsonResponse;
-    }
-    
+	private static String getURLForMostLikedImage(List<Data> dataList) {
+		int highestCount = 0;
+		String url = "";
+		for (Data data: dataList) {
+			int count = data.getLikes().getCount();
+			if (count > highestCount) {
+				highestCount = count;
+				url = data.getImages().getStandard_resolution().getUrl();
+			}
+		}
+		
+		return url;
+	}
 
-    private static HttpClientContext createClientContext(HttpHost target) {
-        // Create AuthCache instance
-        AuthCache authCache = new BasicAuthCache();
+	private static InstagramResponse parseJson(String jsonResponse) {
+		InstagramJSONParser parser = new InstagramJSONParser();
+		return parser.parseResponse(jsonResponse);
+	}
 
-        // Generate BASIC scheme object and add it to the local
-        // auth cache        
-        BasicScheme basicAuth = new BasicScheme();
-        authCache.put(target, basicAuth);
+	private static void storeJsonResponse(String jsonResponse) throws IOException {
+		FileWriter writer = new FileWriter(ConnectToInstaConstants.JSON_RESPONSE); 
+		writer.write(jsonResponse);
+		writer.close();
+	}
 
-        // Add AuthCache to the execution context
-        HttpClientContext localContext = HttpClientContext.create();
-        localContext.setAuthCache(authCache);
+	private static String getJsonResponse(String tag) throws MalformedURLException, IOException {
+		URL url = new URL(buildURI(tag));
+		Scanner scanner = new Scanner(url.openStream());
+		String jsonResponse = scanner.nextLine();
+		scanner.close();
+		return jsonResponse;
+	}
 
-        return localContext;
-    }
-    
-    private static void executeGetHttpRequest(HttpHost target, CloseableHttpClient httpclient, HttpClientContext localContext, HttpGet httpget) throws IOException, ClientProtocolException {
-        System.out.println("Executing request " + httpget.getRequestLine()
-                + " to target " + target);
-        for (int i = 0; i < 3; i++) {
-            CloseableHttpResponse response = httpclient.execute(target, httpget,
-                    localContext);
-            if (response.getStatusLine().getStatusCode() == 200) {
-            	Header locationHeader = response.getFirstHeader("Location");
-            	String location = locationHeader.getValue();
-            	String[] splitLocation = location.split("=");
-            	ACCESS_TOKEN = splitLocation[1];
-                break;
-            } else {
-                System.out.println("Error no re-direct::::" + response.getStatusLine());
-            }
-        }
+	private static String buildURI(String tag) {
+		return ConnectToInstaConstants.INSTAGRAM_URI + ConnectToInstaConstants.TAG + tag + ConnectToInstaConstants.RECENT_MEDIA + ConnectToInstaConstants.QUERY_PARAM_ACCESS_TOKEN + ConnectToInstaConstants.ACCESS_TOKEN;
+	}
 
-    }
-    
-    private static CredentialsProvider buildCredentials(String userName, String password, HttpHost target) {
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        credsProvider.setCredentials(
-                new AuthScope(target.getHostName(), target.getPort()),
-                new UsernamePasswordCredentials(userName, password));
+	private static void prompt(String prompt) {
+		System.out.println(prompt);
+	}
 
-        return credsProvider;	
-    }
+    private static void readAccessToken() throws IOException {
+    	FileReader reader = new FileReader(ConnectToInstaConstants.DESKTOP + ConnectToInstaConstants.ACCESS_TOKEN_FILE);
+		BufferedReader bufferReader = new BufferedReader(reader);
+		String line = "";
+		
+		while((line = bufferReader.readLine())!= null){
+			ConnectToInstaConstants.ACCESS_TOKEN = line;	
+		}
+		
+		bufferReader.close();
+		
+	}
 
 	@SuppressWarnings("resource")
     private static String getUserData(String prompt) {
