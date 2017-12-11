@@ -19,17 +19,21 @@ public class ConnectToInstaApplication {
 		try {
 			userInteractions.readUserAccessToken();
 			userInteractions.prompt("Great, now let's get started!");
-
-			for (int i = 0; i < 3; i++) {
-				String tag = userInteractions.getUserData("What tag would you like to store pictures from: ");
+			userInteractions.prompt("Please enter 3 tags to store pictures from");
+			
+				
+			for (int i = 1; i <=3; i++) {
+				//String tag = userInteractions.getUserData("What tag would you like to store pictures from: ");
+				String tag = userInteractions.getUserData("Enter tag " + i);
 				processTag(tag, i);
 			}
+			userInteractions.prompt("Thank you! Your images have been saved to your desktop.");
 		} catch (IOException e) {
 			userInteractions.prompt("There was an error processing your request. Please try again later.");
 			e.printStackTrace();
 		}
 		
-		userInteractions.prompt("Thank you! Your images have been saved to your desktop.");
+		//userInteractions.prompt("Thank you! Your images have been saved to your desktop.");
 
 	}
 

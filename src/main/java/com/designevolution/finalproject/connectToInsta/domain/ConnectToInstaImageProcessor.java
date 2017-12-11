@@ -15,8 +15,7 @@ public class ConnectToInstaImageProcessor {
 	public void storeImage(String imageUrl, int i) throws IOException {
 		URL url = new URL(imageUrl);
 		InputStream inputSteam = url.openStream();
-		OutputStream outoutSteam = new FileOutputStream(ConnectToInstaConstants.DESKTOP + i + ConnectToInstaConstants.IMAGE_JPG);
-
+		OutputStream outoutSteam = new FileOutputStream(ConnectToInstaConstants.DESKTOP + "\\ConnectToInsta\\" +i + ConnectToInstaConstants.IMAGE_JPG);
 		byte[] b = new byte[2048];
 		int length;
 
@@ -38,7 +37,6 @@ public class ConnectToInstaImageProcessor {
 				url = data.getImages().getStandard_resolution().getUrl();
 			}
 		}
-		
 		return url;
 	}
 

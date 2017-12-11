@@ -21,7 +21,6 @@ public class InstagramJSONParser {
             }.getType();
             instagramJson = gson.fromJson(stringJson, collectionType);
         }
-
         return instagramJson;
     }
 }
